@@ -1,7 +1,7 @@
 cleopatra
 =========
 
-Store and vote on files, authenticated against your Google domain
+Store large files on S3, and make them available to everyone on your Google Apps domain.
 
 Setup
 ======

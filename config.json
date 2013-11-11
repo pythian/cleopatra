@@ -1,0 +1,22 @@
+{
+	"oauth_domain":"",
+	"bucket":"",
+	"session_secret":"",
+	"duration":10800,
+	"dynamo":
+	  {
+	    "region":"us-east-1",
+	    "upvote_table":""
+	  },
+	"aws_cred":
+	   {
+	    "accessKeyId" : "",
+	    "secretAccessKey"  :""
+	   },
+	"oauth":
+	   {
+         "client_id":"",
+         "client_secret":"",
+         "redirect_url":""
+	   }
+}

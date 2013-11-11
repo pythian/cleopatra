@@ -1,0 +1,24 @@
+%link{href:'dirlist.css', rel:'stylesheet'}
+- each c in Contents
+  - if (c.stepUp > 0 ) return "<div class='nestedDir'>"
+  - if (c.stepDown > 0)
+    - for (var i=0; i<c.stepDown; i++) 
+      </div>
+  - if (typeof(c.Path) != 'undefined')
+    .fileBar
+      %span.voteCount
+        - if (typeof(votes[c.Path]) == 'undefined')
+          0
+        - if (typeof(votes[c.Path]) != 'undefined')
+          = votes[c.Path].sum
+      %span.votePanel
+        %a{href:'upvote/'+c.Path}.voteButton
+          - if (typeof(votes[c.Path]) == 'undefined' || ! votes[c.Path].upvoted)
+            &#x25B2;
+        %a{href:'downvote/'+c.Path}.voteButton
+          - if (typeof(votes[c.Path]) == 'undefined' || ! votes[c.Path].downvoted)  
+            &#x25BC;
+      %a{href:'files/'+c.Path}= c.Key
+      = " ("+c.Size+"KB)"
+  - if (typeof(c.Path) == 'undefined')
+    .dirBar= c.Key

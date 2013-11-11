@@ -1,0 +1,36 @@
+a {
+    color: black;
+}
+
+.nestedDir {
+	padding-left:20px;
+	border-left: 4px solid #DDF;
+}
+
+.fileBar{
+    margin: 2px;
+}
+
+.dirBar {
+	background-color: #DDF;
+	padding:3px;
+	margin-top: 2px;
+}
+
+.voteCount {
+	font-weight: bold;
+}
+
+.voteButton {
+	text-decoration: none;
+	min-width: 1em;
+	min-height: 0px;
+    display: inline-block;
+    font-size:12pt;
+    background-color:#DDD;
+    text-align:center;
+}
+
+.votePanel {
+	padding-right:20px;
+}

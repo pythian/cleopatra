@@ -22,14 +22,6 @@ app.use(express.cookieParser());
 app.use(express.session({secret: config.session_secret}));
 app.use(express.static(path.join(__dirname, 'public')));
 
-function longString(){
-	var s ='';
-	for (var i=0; i<1024; i++){
-		s+="f";
-	}
-	return s;
-}
-
 function bounceIfNotDomain(token, domain, callback, bounce_callback){
 	var tmp_client = new oauth.OAuth2Client(config.oauth.client_id, config.oauth.client_secret, config.oauth.redirect_url);
 	tmp_client.credentials = {'access_token':token};
@@ -132,7 +124,7 @@ function downvoteFile(email, key, callback){
         }
         newSum -= 1;
         downvotes.push(email);
-    	dynamo.updateItem({TableName:config.dynamo['upvote_table'], Key:{'File Key':{S:key}}, AttributeUpdates:{'Padding':{Value:{S:longString()}}, 'Sum':{Value:{N:newSum.toString()}, Action:'PUT'}, 'Upvotes':{Value:{SS:upvotes}, Action:'PUT'}, 'Downvotes':{Value:{SS:downvotes}, Action:'PUT'}}}, function(err, data){
+    	dynamo.updateItem({TableName:config.dynamo['upvote_table'], Key:{'File Key':{S:key}}, AttributeUpdates:{'Sum':{Value:{N:newSum.toString()}, Action:'PUT'}, 'Upvotes':{Value:{SS:upvotes}, Action:'PUT'}, 'Downvotes':{Value:{SS:downvotes}, Action:'PUT'}}}, function(err, data){
     	    if (err) callback({'error':err});
             else callback({'success':true});
         });
@@ -193,13 +185,6 @@ app.get('/profile', function(req,res,next){
         })
     }
 });
-
-app.get('/pad', function(req, res, next){
-	for (var i=7000; i<8000; i++){
-		var j=i;
-		downvoteFile("test@test.com", "file"+i, function(err){console.log(err+" "+j);});
-	}
-})
 
 app.get('/list', function(req, res, next){
 	if (req.session.token){

@@ -39,6 +39,7 @@ function bounceIfNotDomain(token, domain, callback, bounce_callback){
 function generateDirectoryList(contents){
 	var files=[];
 	var directories=[];
+    var id=1;
     for (var c in contents){
        var f = contents[c].Key;
        var dirs = f.split('/');
@@ -47,7 +48,7 @@ function generateDirectoryList(contents){
        for (var i=0; i<dirs.length; i++){
            if (dirs[i] != directories[i]){
            	   var name = dirs.slice(i,i+1).join('/');
-           	   var file = {'Key':name};
+           	   var file = {'Key':name, 'id':id};
            	   if (i < dirs.length-1) name += '/';
            	   else file.Path = f;
            	   file.stepDown = directories.length-(i+1);
@@ -55,7 +56,8 @@ function generateDirectoryList(contents){
            	   files.push(file);
                for (var j=i+1; j<dirs.length; j++){
                	   var name = dirs.slice(j,j+1).join('/');
-               	   var file = {'Key':name, 'stepUp':1};
+               	   var file = {'Key':name, 'stepUp':id};
+                   id++;
                	   if (j<dirs.length-1) name+="/";
                	   else {
                	      file.Path = f;
@@ -163,8 +165,12 @@ function getVotes(email, callback){
     
 }
 
+function bounceOAuth(res,source){
+  res.redirect(oauth_client.generateAuthUrl({'access_type':'offline', 'scope':'https://www.googleapis.com/auth/userinfo.email', 'hd':'pythian.com', 'state':source}));
+}
+
 app.get('/', function(req,res,next){
-	res.redirect(oauth_client.generateAuthUrl({'access_type':'offline', 'scope':'https://www.googleapis.com/auth/userinfo.email', 'hd':'pythian.com'}));
+	bounceOAuth(res, '/list');
 });
 
 app.get('/oauth2callback', function(req,res,next){
@@ -173,7 +179,8 @@ app.get('/oauth2callback', function(req,res,next){
 	} else {
         oauth_client.getToken(req.query.code, function(err, tokens){
             req.session.token = tokens.access_token;
-           res.redirect('/list');
+            console.log("State: "+req.query.state);
+           res.redirect(req.query.state);
         });
     }
 });
@@ -201,7 +208,7 @@ app.get('/list', function(req, res, next){
     	        }
             });
         }, function(){
-            res.redirect('/');
+            bounceOAuth(res, '/list');
         });
     } else {
     	res.redirect('/');
@@ -217,7 +224,7 @@ app.get(/upvote\/(.+)/, function(req, res, next){
                 	res.redirect('/list');
                 });
             }, function(){
-            	res.redirect('/');
+            	bounceOAuth(res, '/list');
            });
     } else {
     	res.redirect('/');
@@ -233,7 +240,7 @@ app.get(/downvote\/(.+)/, function(req, res, next){
                 	res.redirect('/list');
                 });
             }, function(){
-            	res.redirect('/');
+            	bounceOAuth(res, '/list');
            });
     } else {
     	res.redirect('/');
@@ -247,10 +254,10 @@ app.get(/files\/(.+)/, function(req, res, next){
         		viewFile(email, req.params[0]);
                 res.redirect(s3.getSignedUrl('getObject', {"Bucket":bucket, "Key":req.params[0], "Expires":config.duration}));
             }, function(){
-            	res.redirect('/');
+            	bounceOAuth(res, '/files/'+req.params[0]);
            });
     } else {
-    	res.redirect('/');
+    	bounceOAuth(res, '/files/'+req.params[0]);
     }
 });
 

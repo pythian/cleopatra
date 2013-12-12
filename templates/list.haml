@@ -1,6 +1,8 @@
-%link{href:'dirlist.css', rel:'stylesheet'}
+%p Click on a directory to view the contents
+%script{src:'https://s3.amazonaws.com/pythian-web-static/cleopatra/dirlist.js'}
+%link{href:'https://s3.amazonaws.com/pythian-web-static/cleopatra/dirlist.css', rel:'stylesheet'}
 - each c in Contents
-  - if (c.stepUp > 0 ) return "<div class='nestedDir'>"
+  - if (c.stepUp > 0 ) return "<div class='nestedDir' id='"+c.stepUp+"' style='display:none;'>"
   - if (c.stepDown > 0)
     - for (var i=0; i<c.stepDown; i++) 
       </div>
@@ -20,4 +22,4 @@
             &#x25BC;
       %a{href:'files/'+c.Path}= c.Key
   - if (typeof(c.Path) == 'undefined')
-    .dirBar= c.Key
+    .dirBar{onclick:'collapse('+c.id+')'}= c.Key
